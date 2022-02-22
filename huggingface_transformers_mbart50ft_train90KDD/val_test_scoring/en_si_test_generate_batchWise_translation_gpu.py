@@ -4,7 +4,7 @@ import torch
 import math
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 
-
+#parameters
 checkpoint="mbart50-ft-en-si-run2"
 os.chdir('/userdirs/aloka/nmt_baseline_experiments/mbart50ft_huggingface_api')
 #initialize tokenizer
