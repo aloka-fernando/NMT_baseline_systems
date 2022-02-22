@@ -5,7 +5,7 @@ import math
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 
 checkpoint='mbart50-ft-si-ta-run1'
-print('Test Scores for {}'.format(checkpoint))
+print('Si-Ta Test Scores for {}'.format(checkpoint))
 
 os.chdir('/userdirs/aloka/nmt_baseline_experiments/mbart50ft_huggingface_api')
 #initialize tokenizer
