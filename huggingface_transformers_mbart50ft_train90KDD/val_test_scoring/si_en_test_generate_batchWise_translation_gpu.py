@@ -8,7 +8,7 @@ from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 
 os.chdir('/userdirs/aloka/nmt_baseline_experiments/mbart50ft_huggingface_api')
 checkpoint='mbart50-ft-si-en-run11'
-print('Evaluation Scores for {}'.format(checkpoint))
+print('Si-En Evaluation Scores for {}'.format(checkpoint))
 
 #initialize tokenizer
 tokenizer = MBart50TokenizerFast.from_pretrained(checkpoint, src_lang="si_LK" )
