@@ -5,15 +5,21 @@ import math
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 
 
-checkpoint='mbart50-ft-si-en-run11'
-print('Validation Scores for {}'.format(checkpoint))
 
 os.chdir('/userdirs/aloka/nmt_baseline_experiments/mbart50ft_huggingface_api')
 #initialize tokenizer
-tokenizer = MBart50TokenizerFast.from_pretrained(checkpoint, src_lang="si_LK", tgt_lang="en_XX")
+tokenizer = MBart50TokenizerFast.from_pretrained("mbart50-ft-en-si-run2", src_lang="en_XX", tgt_lang="si_LK")
+
+#text to translate
+#src_text = ["ප්‍රාදේශීය සේවා වියුක්තියට විසඳුමක් ලෙස රැකියා අවස්ථා අටසිය පනහක් සපයමින්, වාණිජ නිෂ්පාදන කටයුතු අරඹන ලදි."]
+#tgt_text =  'Commercial production is in progress, employing nearly 850  people under this project,  which is a solution for regional service provision.'
+#fairseq_trans='Commercial production commenced by providing eight hundred and forty-eight job opportunities as a solution to regional unemployment.'
+#print('[src] {}\n[ref] {}\n[fairseq_trans] {}'.format(src_text, tgt_text, fairseq_trans))
+#print('Huggingface translations:')
 
 
-src_lines=[line.strip() for line in open('data/parallel-27.04.2021-tu.un.si-en-ta.si', 'r', encoding='utf8')]
+
+src_lines=[line.strip() for line in open('data/parallel-27.04.2021-tu.un.si-en-ta.en', 'r', encoding='utf8')]
 
 print('No of lines in ts set : {}'.format(len(src_lines)))
 
@@ -23,7 +29,7 @@ input_batches= math.ceil(len(src_lines)/input_batchSize)
 print('No of batches : {}'.format(input_batches))
 
 
-directories=os.listdir('/userdirs/aloka/nmt_baseline_experiments/mbart50ft_huggingface_api/'+checkpoint)
+directories=os.listdir('/userdirs/aloka/nmt_baseline_experiments/mbart50ft_huggingface_api/mbart50-ft-en-si-run2')
 # 
 #modelLoadingTime=0
 for subDir in directories :
@@ -32,10 +38,10 @@ for subDir in directories :
 
     if subDir.find('checkpoint-') != -1: 
         print(subDir)  
-        fileOut = open('data/parallel-27.04.2021-tu-translated.un.si-en.en', 'w', encoding='utf8')
+        fileOut = open('data/parallel-27.04.2021-tu-translated.un.en-si.si', 'w', encoding='utf8')
 
         #startTime=time.time() 
-        model = MBartForConditionalGeneration.from_pretrained(checkpoint+"/"+subDir).to("cuda")  
+        model = MBartForConditionalGeneration.from_pretrained("mbart50-ft-en-si-run2/"+subDir).to("cuda")  
         #modelLoadingTime=time.time()
         #print('Model Loading Time: {:0.2f}s'.format(modelLoadingTime-startTime))
         
@@ -60,11 +66,13 @@ for subDir in directories :
             hf_trans_lines=hf_trans_lines+ trans_lines        
             
         for line in hf_trans_lines:                
+                line=line.replace("\u0dca\u0020\u0dbb", "\u0DCA\u200D\u0dbb")
+                line=line.replace("\u0dca\u0020\u0dba", "\u0DCA\u200D\u0dba") 
                 fileOut.write('{}\n'.format(line))
 
         fileOut.close()
 
-        os.system('sacrebleu -tok "none" -s "none" data/parallel-27.04.2021-tu.un.si-en-ta.en < data/parallel-27.04.2021-tu-translated.un.si-en.en ')        
+        os.system('sacrebleu -tok "none" -s "none" data/parallel-27.04.2021-tu.un.si-en-ta.si < data/parallel-27.04.2021-tu-translated.un.en-si.si ')        
 
         #endTime=time.time()
         #print('{} : {:0.2f}min'.format(subDir, (endTime-startTime)/60))        
